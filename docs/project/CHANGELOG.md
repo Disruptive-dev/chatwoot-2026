@@ -5,6 +5,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Super Admin ya no responde 500 en todas las pantallas autenticadas. El sidebar dejaba de pedir una ruta `index` inexistente para `technical_health` y solo muestra ese enlace si la ruta `show` existe.
+
 ## [0.2.3] — 2026-07-30
 
 ### Fixed

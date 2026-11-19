@@ -269,3 +269,25 @@
 ---
 
 <!-- Próximas entradas se agregan debajo, sin modificar las anteriores -->
+
+---
+
+## Hotfix — Super Admin 500 (navegación Technical Health)
+
+| Campo | Valor |
+|-------|-------|
+| **Fecha** | 2026-11-18 |
+| **Rama** | `cursor/superadmin-nav-500-437b` (cherry-pick de `hotfix/optimia-superadmin-technical-health-500-20261118`) |
+| **Commit original** | `c2af646b8` — Pablo Paez - Dev Teams |
+| **Deploy** | No. Merge a `develop` no publica imagen ni toca EasyPanel. |
+| **Producción modificada** | No |
+
+### Causa
+
+`develop` incluye `resource :technical_health, only: [:show]`. El sidebar de Administrate llama `resource_index_route` para ese recurso. No hay acción `index`, así que cualquier pantalla autenticada de Super Admin renderiza `public/500.html`. La ruta ya responde en `https://app.optimia.spectra-metrics.com` (302 a login). En la imagen documentada `v4.10.1-optimia.6` esa ruta no existía y la consola funcionaba.
+
+### Próximo paso exacto
+
+1. Merge a `develop`.
+2. Build de imagen (staging, luego producción con digest validado). El workflow `optimia-build-production.yml` es manual y no despliega solo.
+3. EasyPanel: mismo digest en `chatwoot` y `chatwoot-sidekiq`. No cambiar Postgres, Redis ni variables.
