@@ -277,9 +277,9 @@
 | Campo | Valor |
 |-------|-------|
 | **Fecha** | 2026-11-18 |
-| **Rama** | `cursor/superadmin-nav-500-437b` (cherry-pick de `hotfix/optimia-superadmin-technical-health-500-20261118`) |
-| **Commit original** | `c2af646b8` — Pablo Paez - Dev Teams |
-| **Deploy** | No. Merge a `develop` no publica imagen ni toca EasyPanel. |
+| **Rama** | `develop` en `4cfeee9ff` (fast-forward desde `cursor/superadmin-nav-500-437b`) |
+| **Commit original** | `c2af646b8` — Pablo Paez - Dev Teams. Cherry-pick: `07747ebd7` |
+| **Deploy** | No. El merge no publica imagen ni toca EasyPanel. |
 | **Producción modificada** | No |
 
 ### Causa
@@ -288,6 +288,5 @@
 
 ### Próximo paso exacto
 
-1. Merge a `develop`.
-2. Build de imagen (staging, luego producción con digest validado). El workflow `optimia-build-production.yml` es manual y no despliega solo.
-3. EasyPanel: mismo digest en `chatwoot` y `chatwoot-sidekiq`. No cambiar Postgres, Redis ni variables.
+1. Build de imagen (staging, luego producción con digest validado). El workflow `optimia-build-production.yml` es manual, exige digest de staging y no despliega solo.
+2. EasyPanel: mismo digest en `chatwoot` y `chatwoot-sidekiq`. No cambiar Postgres, Redis ni variables.
