@@ -318,3 +318,60 @@ No se marcó ningún ejemplo como pendiente. No hubo deploy.
 1. Merge de este PR a `develop`. No mergear el hotfix de Super Admin antes.
 2. Dejar el PR del Super Admin encima de esta rama.
 3. Con ambos CI verdes, mergear el hotfix y publicar `staging-cw-4.10.1-optimia-0.2.4`.
+
+---
+
+## Hotfix — Super Admin 500 (recurso sin ruta index)
+
+| Campo | Valor |
+|-------|-------|
+| **Fecha** | 2026-11-20 |
+| **Rama** | `cursor/superadmin-nav-index-guard-75b5` |
+| **Base** | `cursor/optimia-ci-green-75b5` |
+| **Deploy** | No |
+| **Producción modificada** | No |
+| **Imagen publicada** | No |
+
+### Causa raíz
+
+`Administrate::Namespace#resources` enumera cada controlador bajo `super_admin`, no solo los que tienen `index`. `resource :technical_health, only: [:show], controller: 'technical_health'` no define `index`. El sidebar llama `resource_index_route`, que hace `url_for(action: "index", controller: "/super_admin/technical_health")` y lanza `ActionView::Template::Error (No route matches ...)`. El layout envuelve todas las pantallas autenticadas, así que `/super_admin/users` y el resto responden 500. No es un rechazo de autorización: sin sesión, Devise redirige al login antes de renderizar el sidebar.
+
+La imagen en producción `ghcr.io/disruptive-dev/chatwoot:staging-cw-4.10.1-optimia-0.2.3` corresponde al tag git `staging-cw-4.10.1-optimia-0.2.3` → `6a1ffc3d5`. Ese commit no excluye `technical_health` y el stack trace de producción coincide con `_navigation.html.erb` de ese tag (línea 35 sin `technical_health`, línea 38 `resource_index_route`). El commit posterior `07747ebd7` solo añadió el nombre a una lista fija; no está en la imagen 0.2.3 y no cubre otro controlador sin `index`.
+
+Technical Health es una pantalla intencional (show, refresh, diagnose, timeline). No se convierte en recurso Administrate con `index` ni en dashboard: no existe `TechnicalHealthDashboard`, y `display_resource_name` lo cargaría.
+
+### Corrección
+
+- `SuperAdmin::NavigationHelper#super_admin_primary_nav_resources` solo enlaza recursos que están en `resources_with_index_route` y fuera de la lista histórica (incluye `technical_health`).
+- El enlace "Technical Health" sigue usando `super_admin_technical_health_path`.
+- `authenticate_super_admin!` no cambia.
+
+### Prueba
+
+`spec/controllers/super_admin/navigation_spec.rb`
+
+Antes del filtro, con un controlador extra sin `index` (`nav_probe`):
+
+`expected 200 but was 500` y en `log/test.log`: `No route matches {action: "index", controller: "super_admin/nav_probe"}`.
+
+Después: 13 ejemplos, 0 fallos (`navigation_spec`, `technical_health_controller_spec`, `users_controller_spec`). RuboCop limpio en los archivos Ruby tocados.
+
+### Cómo se publica la imagen
+
+| Workflow | Disparo | Tag GHCR |
+|----------|---------|----------|
+| `.github/workflows/optimia-build-staging.yml` | Push de tag `staging-cw-*` o `workflow_dispatch` | `staging-cw-{chatwoot}-optimia-{optimia}` |
+| `.github/workflows/optimia-build-production.yml` | Solo manual, environment `production`, digest de staging, `confirm_production=DEPLOY_OPTIMIA` | `cw-{chatwoot}-optimia-{optimia}` |
+
+Registry por defecto en ambos workflows: `ghcr.io/disruptive-dev/chatwoot` (lo sustituye `vars.OPTIMIA_GHCR_REGISTRY` o el input `registry`). El build de `0.2.3` fue el run [31508160919](https://github.com/Disruptive-dev/chatwoot-2026/actions/runs/31508160919) al pushear el tag `staging-cw-4.10.1-optimia-0.2.3` sobre `6a1ffc3d5`. Ningún workflow despliega EasyPanel.
+
+Producción hoy usa el tag con prefijo `staging-` aunque no haya entorno staging. El tag de producción del otro workflow (`cw-4.10.1-optimia-0.2.4`) no es el que EasyPanel tiene puesto. No se cambia ese esquema.
+
+### Próximo paso exacto
+
+1. Merge del PR a `develop`. No merge automático desde este agente.
+2. Desde `develop` ya mergeado: `git tag staging-cw-4.10.1-optimia-0.2.4 && git push origin staging-cw-4.10.1-optimia-0.2.4`. Alternativa: Actions → OptimiA Build Staging → `optimia_version=0.2.4`, `chatwoot_version=4.10.1`, `dry_run=false`.
+3. Copiar imagen y digest del job summary. Esperado si no hay override: `ghcr.io/disruptive-dev/chatwoot:staging-cw-4.10.1-optimia-0.2.4`.
+4. EasyPanel, proyecto `optimia`: actualizar **chatwoot** y **chatwoot-sidekiq** a ese tag o, mejor, al digest. No tocar `chatwoot-db`, `chatwoot-redis` ni variables. Este hotfix no trae migración.
+5. Smoke con super admin: `/super_admin/users` y `/super_admin/technical_health` responden 200 y el menú muestra Technical Health. Sin sesión, `/super_admin/users` redirige al login.
+6. Rollback: volver ambos servicios al digest actual de `staging-cw-4.10.1-optimia-0.2.3`. No sobrescribir ese tag.

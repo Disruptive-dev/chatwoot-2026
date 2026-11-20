@@ -1,7 +1,7 @@
 # PROJECT-STATUS — OptimiA
 
 > Fuente de verdad del estado del proyecto. Actualizar al cierre de cada sprint.  
-> Última actualización: 2026-07-26 (Sprint v0.2.1 — CI/CD Platform Cleanup)
+> Última actualización: 2026-11-20 (Hotfix Super Admin 500 — navegación sin ruta index)
 
 ## Identidad
 
@@ -10,7 +10,7 @@
 | **Proyecto** | OptimiA |
 | **Base** | Chatwoot |
 | **Versión Chatwoot** | 4.10.1 |
-| **Versión OptimiA** | 0.2.0 (código en develop; imagen no publicada) |
+| **Versión OptimiA** | 0.2.4 en la rama del hotfix (código). Producción sigue en la imagen 0.2.3 hasta el deploy manual. |
 | **Repositorio actual** | `pablo-paez-dev/chatwoot` |
 | **Registry CI activo** | `ghcr.io/pablo-paez-dev/chatwoot` (fallback) |
 | **Registry objetivo** | `ghcr.io/dsw-factory/optimia-chatwoot` (ADR-001 — pendiente GHCR_TOKEN) |
@@ -33,14 +33,14 @@
 
 | Componente | Valor |
 |------------|-------|
-| Imagen | `ghcr.io/disruptive-dev/chatwoot:v4.10.1-optimia.6` |
-| Web | `chatwoot` |
-| Worker | `chatwoot-sidekiq` (misma imagen, Sidekiq operativo) |
+| Imagen | `ghcr.io/disruptive-dev/chatwoot:staging-cw-4.10.1-optimia-0.2.3` |
+| Web | `chatwoot` (proyecto EasyPanel `optimia`) |
+| Worker | `chatwoot-sidekiq` (misma imagen) |
 | PostgreSQL | `chatwoot-db` |
 | Redis | `chatwoot-redis` |
-| Dominio | `https://app.optimia.spectra-metrics.com` |
-| Estado | Clientes reales, operativo |
-| Versión OptimiA prod | 0.1.x (sin Technical Health Center) |
+| Dominio reportado | `https://optimia.spectra-metrics.com` |
+| Estado | Super Admin autenticado responde 500 en el layout. No modificar hasta merge + imagen nueva. |
+| Versión OptimiA prod | 0.2.3 (tag git `staging-cw-4.10.1-optimia-0.2.3` → `6a1ffc3d5`) |
 
 ## Staging
 
@@ -62,6 +62,7 @@
 | Sprint 2 — Channel Manager + Connection Center | **IMPLEMENTADO** (pendiente staging QA) |
 | Sprint 3 — Technical Health Center v0.2.0 | **MERGEADO** a develop |
 | Sprint v0.2.1 — CI/CD Platform Cleanup | **EN PR** (sin deploy) |
+| Hotfix — Super Admin nav sin index | **EN PR** (sin deploy, sin merge) |
 
 ## ADRs
 
@@ -83,11 +84,11 @@
 
 ## Próximo paso exacto
 
-1. Merge PR `cursor/optimia-cicd-cleanup-ce69` → `develop`.
-2. Configurar variables GitHub y environment `production`.
-3. Ejecutar `optimia-build-staging` tag `staging-cw-4.10.1-optimia-0.2.0` (autorización humana).
-4. Deploy staging EasyPanel por digest.
-5. Smoke tests Technical Health + Connection Center.
+1. Merge del PR de este hotfix a `develop`. No desplegar antes.
+2. Publicar imagen nueva (no reutilizar el tag `0.2.3`). Workflow `optimia-build-staging.yml`, tag git `staging-cw-4.10.1-optimia-0.2.4` o `workflow_dispatch` con `optimia_version=0.2.4` y `chatwoot_version=4.10.1`.
+3. Registry por defecto del workflow: `ghcr.io/disruptive-dev/chatwoot`. Confirmar el nombre en el job summary por si `OPTIMIA_GHCR_REGISTRY` lo sustituye.
+4. EasyPanel, proyecto `optimia`: misma imagen o digest en `chatwoot` y `chatwoot-sidekiq`. No cambiar Postgres, Redis ni variables.
+5. Smoke: super admin abre `/super_admin/users` y `/super_admin/technical_health` (200, no 500). Un visitante anónimo sigue redirigido al login.
 
 ## Documentación clave
 

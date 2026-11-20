@@ -297,7 +297,8 @@ jobs:
         run: |
           bundle exec rspec \
             spec/services/optimia/technical_health \
-            spec/controllers/super_admin/technical_health_controller_spec.rb
+            spec/controllers/super_admin/technical_health_controller_spec.rb \
+            spec/controllers/super_admin/navigation_spec.rb
 
   ci-summary:
     name: CI Summary

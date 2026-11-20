@@ -5,9 +5,12 @@
 
 ## [Unreleased]
 
+## [0.2.4] — 2026-11-20
+
 ### Fixed
 
-- Super Admin ya no responde 500 en todas las pantallas autenticadas. El sidebar dejaba de pedir una ruta `index` inexistente para `technical_health` y solo muestra ese enlace si la ruta `show` existe.
+- La consola Super Admin deja de responder 500 cuando Administrate enumera un controlador sin ruta `index`. `technical_health` sigue siendo la página singular `/super_admin/technical_health` y el sidebar enlaza esa ruta `show`. Cualquier otro recurso sin `index` se omite en lugar de tumbar el layout.
+- Los jobs de Ruby en `optimia-ci.yml` usan `ubuntu-24.04`. `ubuntu-latest` es 26.04 y ruby-builder no publica Ruby 3.4.4 para esa imagen, así que CI no llegaba a ejecutar RSpec.
 
 ### CI
 
