@@ -317,6 +317,7 @@ La página de login no usa ese layout. El HTML autenticado de `/super_admin/tech
 | `rspec spec/controllers/super_admin spec/services/optimia/technical_health` | 74 examples, 0 failures |
 | RuboCop `spec/controllers/super_admin/navigation_spec.rb` | sin ofensas |
 | Deploy / publish de imagen | No |
+| CI en GitHub (`ubuntu-latest` = 26.04) | `ruby/setup-ruby` no instala Ruby 3.4.4. El workflow queda fijado a `ubuntu-24.04`. ESLint ya fallaba en `develop` (75 errores ajenos a este cambio). |
 
 ### Próximo paso exacto
 
