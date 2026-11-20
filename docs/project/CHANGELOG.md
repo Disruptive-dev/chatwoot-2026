@@ -12,7 +12,8 @@
 ### CI
 
 - Los jobs de `optimia-ci.yml` usan `ubuntu-24.04`. `ubuntu-latest` es 26.04 y ruby-builder no publica Ruby 3.4.4 para esa imagen.
-- Zeitwerk levanta Postgres y crea la base de test antes del chequeo. En `RAILS_ENV=test` Redis es `MockRedis`.
+- Zeitwerk levanta Postgres y carga el schema antes del chequeo. La base vacía no alcanza: el eager load lee `installation_configs`. En `RAILS_ENV=test` Redis es `MockRedis`.
+- El logo de `Branding.vue` sigue como binding. Un `src` estático hace que Vite lo importe como módulo y rompe `assets:precompile`.
 - RuboCop autocorrectó solo Layout. El resto de ofensas existentes queda en `.rubocop_todo.yml`, sin reescribir la lógica de las integraciones.
 - Los specs que seguían el texto de Chatwoot ahora esperan las cadenas de `en.yml` con la marca OptimIA. `health_check` de Spectra llama `self.class.safe_config_sources`.
 
