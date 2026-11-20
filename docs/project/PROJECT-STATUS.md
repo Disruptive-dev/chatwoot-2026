@@ -1,7 +1,7 @@
 # PROJECT-STATUS — OptimiA
 
 > Fuente de verdad del estado del proyecto. Actualizar al cierre de cada sprint.  
-> Última actualización: 2026-07-26 (Sprint v0.2.1 — CI/CD Platform Cleanup)
+> Última actualización: 2026-11-20 (verificación Super Admin 500 en `develop`)
 
 ## Identidad
 
@@ -10,11 +10,11 @@
 | **Proyecto** | OptimiA |
 | **Base** | Chatwoot |
 | **Versión Chatwoot** | 4.10.1 |
-| **Versión OptimiA** | 0.2.0 (código en develop; imagen no publicada) |
+| **Versión OptimiA** | 0.2.3 (`Optimia::VERSION`; imagen de este HEAD no publicada por este sprint) |
 | **Repositorio actual** | `pablo-paez-dev/chatwoot` |
-| **Registry CI activo** | `ghcr.io/pablo-paez-dev/chatwoot` (fallback) |
+| **Registry CI activo** | `ghcr.io/disruptive-dev/chatwoot` (fallback de `optimia-build-*.yml` si `OPTIMIA_GHCR_REGISTRY` está vacío) |
 | **Registry objetivo** | `ghcr.io/dsw-factory/optimia-chatwoot` (ADR-001 — pendiente GHCR_TOKEN) |
-| **Rama activa** | `develop` @ `1f224c885` |
+| **Rama activa** | `develop` @ `dbecec644` + verificación Super Admin (ver handoff 2026-11-20) |
 
 ## Commits de referencia
 
@@ -61,7 +61,8 @@
 | Sprint 1b — Creación staging EasyPanel | **PENDIENTE** (acción humana) |
 | Sprint 2 — Channel Manager + Connection Center | **IMPLEMENTADO** (pendiente staging QA) |
 | Sprint 3 — Technical Health Center v0.2.0 | **MERGEADO** a develop |
-| Sprint v0.2.1 — CI/CD Platform Cleanup | **EN PR** (sin deploy) |
+| Sprint v0.2.1 — CI/CD Platform Cleanup | **MERGEADO** a develop (sin deploy desde este sprint) |
+| Verificación Super Admin 500 | **CERRADA EN CÓDIGO** (`07747ebd7` ya en develop; specs de regresión). Sin deploy. |
 
 ## ADRs
 
@@ -83,11 +84,12 @@
 
 ## Próximo paso exacto
 
-1. Merge PR `cursor/optimia-cicd-cleanup-ce69` → `develop`.
-2. Configurar variables GitHub y environment `production`.
-3. Ejecutar `optimia-build-staging` tag `staging-cw-4.10.1-optimia-0.2.0` (autorización humana).
-4. Deploy staging EasyPanel por digest.
-5. Smoke tests Technical Health + Connection Center.
+1. Merge del PR de specs de regresión Super Admin → `develop`.
+2. Autorización humana: `optimia-build-staging.yml` en `develop` con `optimia_version=0.2.3`, `chatwoot_version=4.10.1`, `dry_run=false`.
+3. Copiar el digest `sha256:` del job summary / `staging-image-metadata.json`.
+4. Autorización humana: `optimia-build-production.yml` con ese digest, `confirm_production=DEPLOY_OPTIMIA` y la misma versión. El workflow **reconstruye** la imagen; el digest a desplegar es el de producción, no el de staging.
+5. Backup de Postgres. Migrar con la imagen nueva (`db:chatwoot_prepare`) antes de cambiar servicios. EasyPanel: el **mismo** digest de producción en `chatwoot` y `chatwoot-sidekiq`. No tocar `chatwoot-db` ni `chatwoot-redis`.
+6. Verificar `/health`, login Super Admin, dashboard, accounts, users y `/super_admin/technical_health`.
 
 ## Documentación clave
 
