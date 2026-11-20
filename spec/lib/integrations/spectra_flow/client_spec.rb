@@ -30,9 +30,9 @@ RSpec.describe Integrations::SpectraFlow::Client do
 
     it 'falls back to env when account custom attributes are blank' do
       blank_account = create(:account, custom_attributes: {
-                                 'spectra_flow_api_url' => '  ',
-                                 'spectra_flow_bearer_token' => ''
-                               })
+                               'spectra_flow_api_url' => '  ',
+                               'spectra_flow_bearer_token' => ''
+                             })
       allow(ENV).to receive(:fetch).and_call_original
       allow(ENV).to receive(:fetch).with('SPECTRA_FLOW_API_URL', nil).and_return('https://flow-api.spectra-metrics.com/api/')
       allow(ENV).to receive(:fetch).with('SPECTRA_FLOW_INBOX_BEARER_TOKEN', nil).and_return(nil)
@@ -102,8 +102,7 @@ RSpec.describe Integrations::SpectraFlow::Client do
         HTTParty::Response,
         success?: false,
         code: 401,
-        parsed_response: { 'detail' => 'Unauthorized' },
-        message: 'Unauthorized'
+        parsed_response: { 'detail' => 'Unauthorized' }
       )
       allow(described_class).to receive(:get).and_return(response)
 

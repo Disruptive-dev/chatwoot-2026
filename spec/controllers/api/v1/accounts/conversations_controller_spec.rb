@@ -200,7 +200,7 @@ RSpec.describe 'Conversations API', type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         response_data = JSON.parse(response.body, symbolize_names: true)
-        expect(response_data[:error]).to eq('Invalid operator. The allowed operators for status are [equal_to,not_equal_to].')
+        expect(response_data[:error]).to eq('Invalid operator for status.')
       end
     end
   end

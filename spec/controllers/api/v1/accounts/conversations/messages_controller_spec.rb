@@ -102,7 +102,7 @@ RSpec.describe 'Conversation Messages API', type: :request do
           expect(Conversations::ActivityMessageJob)
             .to(have_been_enqueued.at_least(:once)
               .with(conversation, { account_id: conversation.account_id, inbox_id: conversation.inbox_id, message_type: :activity,
-                                    content: 'System reopened the conversation due to a new incoming message.' }))
+                                    content: 'OptimIA system reopened the conversation due to a new incoming message.' }))
         end
       end
     end

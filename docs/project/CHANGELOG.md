@@ -9,6 +9,13 @@
 
 - Super Admin ya no responde 500 en todas las pantallas autenticadas. El sidebar dejaba de pedir una ruta `index` inexistente para `technical_health` y solo muestra ese enlace si la ruta `show` existe.
 
+### CI
+
+- Los jobs de `optimia-ci.yml` usan `ubuntu-24.04`. `ubuntu-latest` es 26.04 y ruby-builder no publica Ruby 3.4.4 para esa imagen.
+- Zeitwerk levanta Postgres y crea la base de test antes del chequeo. En `RAILS_ENV=test` Redis es `MockRedis`.
+- RuboCop autocorrectó solo Layout. El resto de ofensas existentes queda en `.rubocop_todo.yml`, sin reescribir la lógica de las integraciones.
+- Los specs que seguían el texto de Chatwoot ahora esperan las cadenas de `en.yml` con la marca OptimIA. `health_check` de Spectra llama `self.class.safe_config_sources`.
+
 ## [0.2.3] — 2026-07-30
 
 ### Fixed

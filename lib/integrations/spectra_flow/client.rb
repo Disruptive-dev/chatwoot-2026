@@ -69,7 +69,7 @@ module Integrations
             duration_ms: duration_ms,
             host: host,
             path: SENDABLE_PATH,
-            config_sources: safe_config_sources(@config_sources)
+            config_sources: self.class.safe_config_sources(@config_sources)
           }
         else
           {
@@ -79,7 +79,7 @@ module Integrations
             duration_ms: duration_ms,
             host: host,
             path: SENDABLE_PATH,
-            config_sources: safe_config_sources(@config_sources)
+            config_sources: self.class.safe_config_sources(@config_sources)
           }
         end
       rescue ConfigurationError => e
@@ -90,7 +90,7 @@ module Integrations
           duration_ms: elapsed_ms(started),
           host: host,
           path: SENDABLE_PATH,
-          config_sources: safe_config_sources(e.config_sources),
+          config_sources: self.class.safe_config_sources(e.config_sources),
           error_class: e.class.name
         }
       end

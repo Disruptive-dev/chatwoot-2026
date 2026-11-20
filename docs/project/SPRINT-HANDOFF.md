@@ -290,3 +290,31 @@
 
 1. Build de imagen (staging, luego producción con digest validado). El workflow `optimia-build-production.yml` es manual, exige digest de staging y no despliega solo.
 2. EasyPanel: mismo digest en `chatwoot` y `chatwoot-sidekiq`. No cambiar Postgres, Redis ni variables.
+
+---
+
+## CI verde — antes del hotfix Super Admin
+
+| Campo | Valor |
+|-------|-------|
+| **Fecha** | 2026-11-20 |
+| **Rama** | `cursor/optimia-ci-green-75b5` |
+| **Base** | `develop` @ `dbecec644` |
+| **Deploy** | No |
+| **Producción modificada** | No |
+| **EasyPanel modificado** | No |
+
+### Causas y arreglo
+
+- Zeitwerk abortaba con `ActiveRecord::ConnectionNotEstablished` porque eager load abre Postgres y el job no tenía servicio. Se añade Postgres y `db:create`. Redis de test es `MockRedis`.
+- RuboCop: ofensas de estilo y métricas ya presentes en Channel Manager, Spectra y Technical Health. Autocorrect solo de Layout. El resto en `.rubocop_todo.yml`.
+- ESLint: Prettier en los Vue/JS de WhatsApp, `commit` sin uso en `diagnose` y `:src` con literal en `Branding.vue`.
+- RSpec: `en.yml` ya usa la marca OptimIA y los specs seguían el texto anterior. Spectra `health_check` llamaba el sanitizador de clase como si fuera de instancia. El acceso a otra cuenta en documentos Spectra responde 401 por `Pundit::NotAuthorizedError`, no 404.
+
+No se marcó ningún ejemplo como pendiente. No hubo deploy.
+
+### Próximo paso exacto
+
+1. Merge de este PR a `develop`. No mergear el hotfix de Super Admin antes.
+2. Dejar el PR del Super Admin encima de esta rama.
+3. Con ambos CI verdes, mergear el hotfix y publicar `staging-cw-4.10.1-optimia-0.2.4`.

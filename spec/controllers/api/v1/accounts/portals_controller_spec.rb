@@ -295,7 +295,7 @@ RSpec.describe 'Api::V1::Accounts::Portals', type: :request do
              as: :json
 
         expect(response).to have_http_status(:success)
-        expect(response.parsed_body['message']).to eq('Instructions sent successfully')
+        expect(response.parsed_body['message']).to eq('Instructions sent successfully from OptimIA')
         expect(PortalInstructionsMailer).to have_received(:send_cname_instructions)
           .with(portal: portal_with_domain, recipient_email: 'dev@example.com')
       end

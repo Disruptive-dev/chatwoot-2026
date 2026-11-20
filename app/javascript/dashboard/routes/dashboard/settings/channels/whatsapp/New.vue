@@ -19,15 +19,21 @@ const startConnection = async () => {
   if (!displayName.value.trim()) return;
 
   try {
-    const connection = await store.dispatch('optimiaWhatsappConnections/createConnection', {
-      display_name: displayName.value.trim(),
-    });
+    const connection = await store.dispatch(
+      'optimiaWhatsappConnections/createConnection',
+      {
+        display_name: displayName.value.trim(),
+      }
+    );
     await router.push({
       name: 'settings_channels_whatsapp_show',
       params: { connectionId: connection.id },
     });
   } catch (error) {
-    useAlert(parseAPIErrorResponse(error) || t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.ERRORS.GENERIC'));
+    useAlert(
+      parseAPIErrorResponse(error) ||
+        t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.ERRORS.GENERIC')
+    );
   }
 };
 </script>
@@ -50,7 +56,11 @@ const startConnection = async () => {
           v-model="displayName"
           type="text"
           class="w-full rounded-xl border border-n-weak bg-n-solid-1 px-4 py-2 text-sm text-n-slate-12"
-          :placeholder="$t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.WIZARD.DISPLAY_NAME_PLACEHOLDER')"
+          :placeholder="
+            $t(
+              'OPTIMIA_CHANNEL_MANAGER.WHATSAPP.WIZARD.DISPLAY_NAME_PLACEHOLDER'
+            )
+          "
         />
         <div class="mt-4">
           <NextButton

@@ -304,6 +304,7 @@ module Optimia
 
         inbox = ProvisioningService.new(connection: connection, performed_by: @performed_by).perform!
         return if inbox.blank?
+
         from_state = connection.state
         connection.transition_to!('syncing') if connection.can_transition_to?('syncing')
 

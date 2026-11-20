@@ -6,7 +6,8 @@ RSpec.describe Optimia::TechnicalHealth::Orchestrator do
   before do
     allow(Integrations::Evolution::Client).to receive(:configured?).and_return(false)
     allow(Sidekiq::Stats).to receive(:new).and_return(
-      instance_double(Sidekiq::Stats, workers_size: 1, enqueued: 0, failed: 0, processed: 1, default_queue_latency: 0, scheduled_size: 0, retry_size: 0)
+      instance_double(Sidekiq::Stats, workers_size: 1, enqueued: 0, failed: 0, processed: 1, default_queue_latency: 0, scheduled_size: 0,
+                                      retry_size: 0)
     )
     allow(Sidekiq::ProcessSet).to receive(:new).and_return([double('process')])
     allow(Sidekiq::DeadSet).to receive(:new).and_return(double(size: 0))
