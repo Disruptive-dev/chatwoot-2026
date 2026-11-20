@@ -23,6 +23,17 @@ RSpec.describe SuperAdmin::TechnicalHealthController, type: :request do
 
       expect(response).to redirect_to(new_super_admin_session_path)
     end
+
+    it 'renders the NOC dashboard for an authenticated super admin' do
+      sign_in(super_admin, scope: :super_admin)
+
+      get super_admin_technical_health_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Technical Health Center')
+      expect(response.body).to include('NOC Dashboard')
+      expect(response.body).to include(super_admin_technical_health_path)
+    end
   end
 
   describe 'GET /super_admin/technical_health/diagnose' do

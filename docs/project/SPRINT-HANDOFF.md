@@ -290,3 +290,35 @@
 
 1. Build de imagen (staging, luego producción con digest validado). El workflow `optimia-build-production.yml` es manual, exige digest de staging y no despliega solo.
 2. EasyPanel: mismo digest en `chatwoot` y `chatwoot-sidekiq`. No cambiar Postgres, Redis ni variables.
+
+---
+
+## Verificación — Super Admin 500 en develop (2026-11-20)
+
+| Campo | Valor |
+|-------|-------|
+| **Fecha** | 2026-11-20 |
+| **Rama de trabajo** | `cursor/superadmin-nav-regression-f43a` |
+| **Base** | `develop` @ `dbecec644` (incluye `07747ebd7`) |
+| **Deploy** | No |
+| **Producción modificada** | No |
+| **Workflows disparados** | No |
+
+### Veredicto
+
+El 500 de las pantallas autenticadas de Super Admin queda corregido en `develop`. `Administrate::Namespace` sigue incluyendo el controlador `technical_health`, que no tiene ruta `index`. El sidebar (`app/views/super_admin/application/_navigation.html.erb`) lo excluye del bucle `resource_index_route` y enlaza `super_admin_technical_health_path`. No apareció otro recurso de Super Admin sin `index` fuera de esa lista de exclusión.
+
+La página de login no usa ese layout. El HTML autenticado de `/super_admin/technical_health` renderiza el NOC si las tablas de la migración `20260724160000` existen. `docker/entrypoints/rails.sh` no ejecuta migraciones.
+
+### Controles
+
+| Control | Resultado |
+|---------|-----------|
+| `rspec spec/controllers/super_admin spec/services/optimia/technical_health` | 74 examples, 0 failures |
+| RuboCop `spec/controllers/super_admin/navigation_spec.rb` | sin ofensas |
+| Deploy / publish de imagen | No |
+| CI en GitHub (`ubuntu-latest` = 26.04) | `ruby/setup-ruby` no instala Ruby 3.4.4. El workflow queda fijado a `ubuntu-24.04`. ESLint ya fallaba en `develop` (75 errores ajenos a este cambio). |
+
+### Próximo paso exacto
+
+Build humano de imagen (staging y luego producción) y actualización manual de EasyPanel al digest de producción. El checklist operativo está en el informe de esta verificación y en la descripción del PR.

@@ -9,6 +9,11 @@
 
 - Super Admin ya no responde 500 en todas las pantallas autenticadas. El sidebar dejaba de pedir una ruta `index` inexistente para `technical_health` y solo muestra ese enlace si la ruta `show` existe.
 
+### Added
+
+- Specs de request para el sidebar de Super Admin (dashboard, accounts, users, technical health y login) y para el HTML autenticado de `/super_admin/technical_health`.
+- `optimia-ci.yml` usa `ubuntu-24.04`. En `ubuntu-latest` (26.04) `ruby/setup-ruby` no instala Ruby 3.4.4.
+
 ## [0.2.3] — 2026-07-30
 
 ### Fixed
