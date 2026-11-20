@@ -23,7 +23,8 @@ module Optimia
 
       def apply_upstream_failure!(error_code:)
         from_state = @connection.state
-        transition_with_audit!('degraded', action: 'connection_degraded', metadata: { error_code: error_code }) if @connection.can_transition_to?('degraded')
+        transition_with_audit!('degraded', action: 'connection_degraded',
+                                           metadata: { error_code: error_code }) if @connection.can_transition_to?('degraded')
 
         @alert_service.notify!(
           alert_type: 'evolution_unavailable',

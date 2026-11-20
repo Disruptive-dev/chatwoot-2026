@@ -32,7 +32,8 @@ export const actions = {
   createConnection: async ({ commit }, payload) => {
     commit('SET_UI_FLAG', { isCreating: true });
     try {
-      const { data } = await OptimiaWhatsappConnectionsAPI.createConnection(payload);
+      const { data } =
+        await OptimiaWhatsappConnectionsAPI.createConnection(payload);
       commit('UPSERT_RECORD', data.data);
       commit('SET_ACTIVE_CONNECTION', data.data);
       commit('SET_ACTIVE_QR', data.data.qr || null);
@@ -114,9 +115,12 @@ export const actions = {
   deleteConnection: async ({ commit }, { id, deleteInbox = true }) => {
     commit('SET_UI_FLAG', { isUpdating: true });
     try {
-      const { data } = await OptimiaWhatsappConnectionsAPI.deleteConnection(id, {
-        delete_inbox: deleteInbox,
-      });
+      const { data } = await OptimiaWhatsappConnectionsAPI.deleteConnection(
+        id,
+        {
+          delete_inbox: deleteInbox,
+        }
+      );
       commit('UPSERT_RECORD', data.data);
       commit('SET_ACTIVE_CONNECTION', data.data);
       return data.data;
@@ -125,7 +129,7 @@ export const actions = {
     }
   },
 
-  diagnose: async ({ commit }, id) => {
+  diagnose: async (_context, id) => {
     const { data } = await OptimiaWhatsappConnectionsAPI.diagnose(id);
     return data.data;
   },

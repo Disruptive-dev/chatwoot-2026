@@ -224,7 +224,7 @@ RSpec.describe Conversation do
                      else
                        { key: 'auto_resolved_minutes', count: account.auto_resolve_after }
                      end
-      system_resolved_message = "Conversation was marked resolved by system due to #{message_data[:count]} days of inactivity"
+      system_resolved_message = "Conversation was marked resolved by OptimIA due to #{message_data[:count]} days of inactivity"
       expect { conversation2.update(status: :resolved) }
         .to have_enqueued_job(Conversations::ActivityMessageJob)
         .with(conversation2, { account_id: conversation2.account_id, inbox_id: conversation2.inbox_id, message_type: :activity,

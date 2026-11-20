@@ -81,7 +81,7 @@ RSpec.describe 'Spectra Documents API', type: :request do
           headers: agent.create_new_auth_token,
           as: :json
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 

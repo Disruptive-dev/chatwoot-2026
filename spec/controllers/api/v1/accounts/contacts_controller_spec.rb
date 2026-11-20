@@ -458,7 +458,7 @@ RSpec.describe 'Contacts API', type: :request do
              as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include('Invalid operator. The allowed operators for country_code are [equal_to,not_equal_to]')
+        expect(response.body).to include('Invalid operator for country_code.')
       end
 
       it 'returns error the query value is invalid' do
@@ -472,7 +472,7 @@ RSpec.describe 'Contacts API', type: :request do
              as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include('Invalid value. The values provided for country_code are invalid"')
+        expect(response.body).to include('The values provided for country_code are invalid')
       end
     end
   end

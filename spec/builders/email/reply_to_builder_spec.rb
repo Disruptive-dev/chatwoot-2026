@@ -73,7 +73,7 @@ RSpec.describe Email::ReplyToBuilder do
           builder = described_class.new(inbox: inbox, message: current_message)
           result = builder.build
 
-          expect(result).to include("#{inbox.name} <support@example.com>")
+          expect(result).to include("#{agent.available_name} from #{inbox.sanitized_name} via OptimIA <support@example.com>")
         end
       end
 

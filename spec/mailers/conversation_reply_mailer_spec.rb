@@ -50,7 +50,7 @@ RSpec.describe ConversationReplyMailer do
       let(:cc_mail) { described_class.reply_with_summary(cc_message.conversation, message.id).deliver_now }
 
       it 'renders the default subject' do
-        expect(mail.subject).to eq("[##{message.conversation.display_id}] New messages on this conversation")
+        expect(mail.subject).to eq("[##{message.conversation.display_id}] New messages on OptimIA")
       end
 
       it 'renders the subject in conversation as reply' do
@@ -87,7 +87,7 @@ RSpec.describe ConversationReplyMailer do
       let(:mail) { described_class.reply_with_summary(message.conversation, message.id).deliver_now }
 
       it 'has correct name' do
-        expect(mail[:from].display_names).to eq(["#{message.sender.available_name} from #{message.conversation.inbox.sanitized_name}"])
+        expect(mail[:from].display_names).to eq(["#{message.sender.available_name} from #{message.conversation.inbox.sanitized_name} via OptimIA"])
       end
     end
 
@@ -109,7 +109,7 @@ RSpec.describe ConversationReplyMailer do
       end
 
       it 'renders the default subject' do
-        expect(mail.subject).to eq("[##{message_2.conversation.display_id}] New messages on this conversation")
+        expect(mail.subject).to eq("[##{message_2.conversation.display_id}] New messages on OptimIA")
       end
 
       it 'renders the subject in conversation' do
@@ -236,7 +236,7 @@ RSpec.describe ConversationReplyMailer do
       let(:mail) { described_class.email_reply(message).deliver_now }
 
       it 'renders the subject' do
-        expect(mail.subject).to eq("[##{message.conversation.display_id}] New messages on this conversation")
+        expect(mail.subject).to eq("[##{message.conversation.display_id}] New messages on OptimIA")
       end
 
       it 'renders the body' do
@@ -466,19 +466,25 @@ RSpec.describe ConversationReplyMailer do
 
       it 'renders sender name in the from address' do
         mail = described_class.email_reply(message)
-        expect(mail['from'].value).to eq "#{message.sender.available_name} from #{smtp_channel.inbox.sanitized_name} <#{smtp_channel.email}>"
+        expect(mail['from'].value).to eq(
+          "#{message.sender.available_name} from #{smtp_channel.inbox.sanitized_name} via OptimIA <#{smtp_channel.email}>"
+        )
       end
 
       it 'renders sender name even when assignee is not present' do
         conversation.update(assignee_id: nil)
         mail = described_class.email_reply(message)
-        expect(mail['from'].value).to eq "#{message.sender.available_name} from #{smtp_channel.inbox.sanitized_name} <#{smtp_channel.email}>"
+        expect(mail['from'].value).to eq(
+          "#{message.sender.available_name} from #{smtp_channel.inbox.sanitized_name} via OptimIA <#{smtp_channel.email}>"
+        )
       end
 
       it 'renders assignee name in the from address when sender_name not available' do
         message.update(sender_id: nil)
         mail = described_class.email_reply(message)
-        expect(mail['from'].value).to eq "#{conversation.assignee.available_name} from #{smtp_channel.inbox.sanitized_name} <#{smtp_channel.email}>"
+        expect(mail['from'].value).to eq(
+          "#{conversation.assignee.available_name} from #{smtp_channel.inbox.sanitized_name} via OptimIA <#{smtp_channel.email}>"
+        )
       end
 
       it 'renders inbox name as sender and assignee or business_name not present' do
@@ -486,7 +492,9 @@ RSpec.describe ConversationReplyMailer do
         conversation.update(assignee_id: nil)
 
         mail = described_class.email_reply(message)
-        expect(mail['from'].value).to eq "Notifications from #{smtp_channel.inbox.sanitized_name} <#{smtp_channel.email}>"
+        expect(mail['from'].value).to eq(
+          "OptimIA Notifications from #{smtp_channel.inbox.sanitized_name} via OptimIA <#{smtp_channel.email}>"
+        )
       end
 
       context 'when friendly name enabled' do
@@ -502,7 +510,7 @@ RSpec.describe ConversationReplyMailer do
 
           mail = described_class.email_reply(message)
 
-          expect(mail['from'].value).to eq "Notifications from #{conversation.inbox.sanitized_name} <#{smtp_channel.email}>"
+          expect(mail['from'].value).to eq "OptimIA Notifications from #{conversation.inbox.sanitized_name} via OptimIA <#{smtp_channel.email}>"
         end
 
         it 'renders sender name as sender and assignee nil and business_name present' do
@@ -512,7 +520,7 @@ RSpec.describe ConversationReplyMailer do
           mail = described_class.email_reply(message)
 
           expect(mail['from'].value).to eq(
-            "Notifications from #{conversation.inbox.business_name} <#{smtp_channel.email}>"
+            "OptimIA Notifications from #{conversation.inbox.business_name} via OptimIA <#{smtp_channel.email}>"
           )
         end
 
@@ -521,7 +529,7 @@ RSpec.describe ConversationReplyMailer do
           conversation.update(assignee_id: agent.id)
 
           mail = described_class.email_reply(message)
-          expect(mail['from'].value).to eq "#{agent.available_name} from #{conversation.inbox.business_name} <#{smtp_channel.email}>"
+          expect(mail['from'].value).to eq "#{agent.available_name} from #{conversation.inbox.business_name} via OptimIA <#{smtp_channel.email}>"
         end
 
         it 'renders sender name as sender and assignee and business_name present' do
@@ -530,7 +538,7 @@ RSpec.describe ConversationReplyMailer do
           conversation.update(assignee_id: agent.id)
 
           mail = described_class.email_reply(message)
-          expect(mail['from'].value).to eq "#{agent_2.available_name} from #{conversation.inbox.business_name} <#{smtp_channel.email}>"
+          expect(mail['from'].value).to eq "#{agent_2.available_name} from #{conversation.inbox.business_name} via OptimIA <#{smtp_channel.email}>"
         end
       end
 
@@ -547,7 +555,7 @@ RSpec.describe ConversationReplyMailer do
 
           mail = described_class.email_reply(message)
 
-          expect(mail['from'].value).to eq "#{conversation.inbox.sanitized_name} <#{smtp_channel.email}>"
+          expect(mail['from'].value).to eq "#{conversation.inbox.sanitized_name} (OptimIA) <#{smtp_channel.email}>"
         end
 
         it 'renders sender name as business_name present' do
@@ -556,7 +564,7 @@ RSpec.describe ConversationReplyMailer do
 
           mail = described_class.email_reply(message)
 
-          expect(mail['from'].value).to eq "#{conversation.inbox.business_name} <#{smtp_channel.email}>"
+          expect(mail['from'].value).to eq "#{conversation.inbox.business_name} (OptimIA) <#{smtp_channel.email}>"
         end
       end
     end
@@ -656,13 +664,15 @@ RSpec.describe ConversationReplyMailer do
 
       it 'sets reply to email to be based on the domain' do
         reply_to_email = "reply+#{message.conversation.uuid}@#{conversation.account.domain}"
-        reply_to = "#{message.sender.available_name} from #{conversation.inbox.sanitized_name} <#{reply_to_email}>"
+        reply_to = "#{message.sender.available_name} from #{conversation.inbox.sanitized_name} via OptimIA <#{reply_to_email}>"
         expect(mail['REPLY-TO'].value).to eq(reply_to)
         expect(mail.reply_to).to eq([reply_to_email])
       end
 
       it 'sets the from email to be the support email' do
-        expect(mail['FROM'].value).to eq("#{conversation.messages.last.sender.available_name} from Inbox <#{conversation.account.support_email}>")
+        expect(mail['FROM'].value).to eq(
+          "#{conversation.messages.last.sender.available_name} from Inbox via OptimIA <#{conversation.account.support_email}>"
+        )
         expect(mail.from).to eq([conversation.account.support_email])
       end
 

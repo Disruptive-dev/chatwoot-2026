@@ -22,7 +22,10 @@ const stateLabel = state =>
 
 const healthLabel = healthStatus => {
   const key = (healthStatus || '').toUpperCase();
-  return t(`OPTIMIA_CHANNEL_MANAGER.WHATSAPP.HEALTH.${key}`, healthStatus || '—');
+  return t(
+    `OPTIMIA_CHANNEL_MANAGER.WHATSAPP.HEALTH.${key}`,
+    healthStatus || '—'
+  );
 };
 
 const formatDate = value => {
@@ -57,7 +60,10 @@ onMounted(() => {
           {{ $t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.DESCRIPTION') }}
         </p>
       </div>
-      <NextButton :label="$t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.CONNECT_BUTTON')" @click="goToNew" />
+      <NextButton
+        :label="$t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.CONNECT_BUTTON')"
+        @click="goToNew"
+      />
     </div>
 
     <LoadingState v-if="isLoading" />
@@ -81,22 +87,34 @@ onMounted(() => {
       <table class="min-w-full divide-y divide-n-weak">
         <thead class="bg-n-alpha-1">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11"
+            >
               {{ $t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.STATUS') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11"
+            >
               {{ $t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.HEALTH') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11"
+            >
               {{ $t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.PHONE') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11"
+            >
               {{ $t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.LAST_CHECK') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11"
+            >
               {{ $t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.RECONNECTS') }}
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium uppercase text-n-slate-11"
+            >
               {{ $t('OPTIMIA_CHANNEL_MANAGER.WHATSAPP.LIST.INBOX') }}
             </th>
             <th class="px-4 py-3" />
@@ -106,7 +124,9 @@ onMounted(() => {
           <tr v-for="connection in connections" :key="connection.id">
             <td class="px-4 py-4 text-sm text-n-slate-12">
               {{ connection.display_name }}
-              <div class="text-xs text-n-slate-11">{{ stateLabel(connection.state) }}</div>
+              <div class="text-xs text-n-slate-11">
+                {{ stateLabel(connection.state) }}
+              </div>
             </td>
             <td class="px-4 py-4 text-sm text-n-slate-12">
               {{ healthLabel(connection.health_status) }}
